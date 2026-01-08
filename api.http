@@ -1,0 +1,46 @@
+@server=http://localhost:8000/api
+@token=12|yYrPA7dwbV2FI1Ee2BXSdXr45GiblZ887r99WCsWd064e3a5
+
+
+POST {{server}}/auth/managers/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "admin@nobel.com",
+    "password": "nobel"
+}
+
+
+
+### Logout
+
+POST {{server}}/auth/logout
+Authorization: Bearer {{token}}
+Content-Type: application/json
+Accept: application/json
+
+
+
+### get all settings
+GET {{server}}/settings
+Authorization: Bearer {{token}}
+
+
+### update settings
+PUT {{server}}/settings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "general": {
+    "gen": "zx"
+  },
+  "contact": {
+    "phone_number": "012xxxxxxxx"
+  },
+  "social": {
+    "facebook": "httpxx"
+  }
+}
