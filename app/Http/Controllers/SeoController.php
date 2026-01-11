@@ -25,15 +25,16 @@ class SeoController extends Controller
     }
 
     // The ONLY update endpoint
-    public function update(Request $request, Seo $seo)
+    public function update(Request $request, $key)
     {
+        $seo = Seo::where('key', $key)->first();
+
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string|max:500',
             'keywords' => 'nullable|string|max:255',
 
-            'og_title' => 'nullable|string|max:255',
-            'og_description' => 'nullable|string|max:500',
             'og_image' => 'nullable|image|max:2048', // Validate if a new image is uploaded
         ]);
 
@@ -41,9 +42,6 @@ class SeoController extends Controller
             'title' => $validated['title'],
             'description' => $validated['description'],
             'keywords' => $validated['keywords'] ?? null,
-
-            'og_title' => $validated['og_title'] ?? $validated['title'],
-            'og_description' => $validated['og_description'] ?? $validated['description'],
         ];
 
         if ($request->hasFile('og_image')) {

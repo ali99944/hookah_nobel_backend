@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactRequestController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\SettingsController;
@@ -30,13 +31,15 @@ Route::group(['prefix' => 'auth/users'], function () {
 
 Route::middleware('auth:manager')->group(function () {
 
-    Route::get('/seos', [SeoController::class, 'index']);
-    Route::put('/seos/{id}', [SeoController::class, 'update']);
 });
+
+Route::get('/seos', [SeoController::class, 'index']);
+Route::put('/seos/{key}', [SeoController::class, 'update']);
+Route::get('/seos/{key}', [SeoController::class, 'show']);
+
 
 Route::get('/settings', [SettingsController::class, 'index']);
 Route::post('/settings', [SettingsController::class, 'update']);
-Route::get('/seos/{key}', [SeoController::class, 'show']);
 
 
 
@@ -57,3 +60,8 @@ Route::prefix('cart')->group(function () {
     Route::delete('/items/{cartItemId}', [CartController::class, 'destroy']);
     Route::post('/clear', [CartController::class, 'clear']);
 });
+
+
+Route::get('/policies', [PolicyController::class, 'index']);
+Route::get('/policies/{key}', [PolicyController::class, 'show']);
+Route::put('/policies/{key}', [PolicyController::class, 'update']);

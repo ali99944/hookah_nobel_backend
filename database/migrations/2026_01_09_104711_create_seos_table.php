@@ -6,26 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('seos', function (Blueprint $table) {
             $table->id();
             $table->string('key')->unique();
-
-            // --- Standard SEO Meta Tags ---
-            $table->string('title', 255);
-            $table->string('description', 500);
-            $table->string('keywords', 255)->nullable();
-
-            // --- Open Graph (for Facebook, LinkedIn, etc.) ---
-            $table->string('og_title', 255)->nullable();
-            $table->string('og_description', 500)->nullable();
-            $table->string('og_image')->nullable(); // URL to the image
-
+            $table->string('page_name');
+            $table->string('title');
+            $table->string('description');
+            $table->string('keywords');
+            $table->string('og_image')->nullable();
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('seos');

@@ -9,8 +9,6 @@ class Seo extends Model
     use HasFactory;
     protected $fillable = [
         'key', 'title', 'description', 'keywords',
-        'og_title', 'og_description', 'og_image', 'og_type'
+        'og_image', 'page_name'
     ];
-
-    protected $casts = ['structured_data' => 'array'];
 }

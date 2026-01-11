@@ -12,13 +12,12 @@ class SeoResource extends JsonResource
         return [
             'id' => $this->id,
             'key' => $this->key,
+            'page_name' => $this->page_name,
 
             'title' => $this->title,
             'description' => $this->description,
             'keywords' => $this->keywords,
 
-            'og_title' => $this->og_title,
-            'og_description' => $this->og_description,
             'og_image' => $this->og_image,
         ];
     }
