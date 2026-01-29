@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class UpdateProductRequest extends FormRequest
@@ -16,10 +17,11 @@ class UpdateProductRequest extends FormRequest
 
     public function rules(): array
     {
+        Log::channel('server_debug') -> info($this);
         return [
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
-            'slug' => ['required', 'string', 'max:255', Rule::unique('products')->ignore($this->product)],
+            'slug' => ['required', 'string', 'max:255', Rule::unique('products')->ignore($this->product->id)],
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',

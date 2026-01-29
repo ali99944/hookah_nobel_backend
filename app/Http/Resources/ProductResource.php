@@ -19,6 +19,7 @@ class ProductResource extends JsonResource
             'status' => $this->status,
             'cover_image' => $this->cover_image_url,
             'category' => new CategoryResource($this->whenLoaded('category')),
+            'category_id' => $this->category_id,
 
             // Relations
             'gallery' => $this->gallery->map(fn($img) => [

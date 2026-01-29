@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ManagerSeeder::class,
             CategorySeeder::class,
-            ProductSeeder::class,
             SeoSeeder::class,
             PolicySeeder::class
         ]);

@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -75,6 +76,8 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, Product $product)
     {
+        Log::channel('server_debug') -> info($request->validated());
+        // Log::channel('custom_payment') -> info($request->all());
         $data = $request->validated();
 
         return DB::transaction(function () use ($request, $product, $data) {
@@ -117,7 +120,7 @@ class ProductController extends Controller
                 $product->features()->createMany($data['features']);
             }
 
-            return new ProductResource($product->fresh(['gallery', 'attributes', 'features']));
+            return new ProductResource($product->fresh(['gallery', 'attributes', 'features', 'category']));
         });
     }
 

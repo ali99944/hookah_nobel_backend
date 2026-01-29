@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
+            $table->decimal('discount', 10, 2)->nullable()->default(0.00);
             $table->integer('stock')->default(0);
             $table->enum('status', ['active', 'inactive', 'draft'])->default('draft');
             $table->string('cover_image')->nullable();
@@ -57,3 +58,4 @@ return new class extends Migration
         Schema::dropIfExists('products');
     }
 };
+

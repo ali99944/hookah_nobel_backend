@@ -58,6 +58,12 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        'server_debug' => [
+            'driver' => 'single', // or 'daily' for daily rotation
+            'path' => storage_path('logs/debug.log'),
+            'level' => 'debug',
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),

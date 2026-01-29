@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
+use App\Services\ImageService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
@@ -33,9 +34,10 @@ class CategoryController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            // Store in 'public/categories' folder
-            $path = $request->file('image')->store('categories', 'public');
-            $data['image'] = $path;
+            $data['image'] = ImageService::storeUnsafe(
+                $request->file('image'),
+                'categories'
+            );
         }
 
         $category = Category::create($data);
@@ -56,12 +58,10 @@ class CategoryController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($category->image) {
-                Storage::disk('public')->delete($category->image);
-            }
-            $path = $request->file('image')->store('categories', 'public');
-            $data['image'] = $path;
+            $data['image'] = ImageService::storeUnsafe(
+                $request->file('image'),
+                'categories'
+            );
         }
 
         $category->update($data);

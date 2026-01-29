@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\ManagerController;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactRequestController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\ProductController;
@@ -43,9 +44,9 @@ Route::post('/settings', [SettingsController::class, 'update']);
 
 
 
-Route::apiResource('categories', CategoryController::class);
+Route::apiResource('collections', CategoryController::class);
 
-Route::get('/categories/{slug}/products', [CategoryController::class, 'products']);
+Route::get('/collections/{slug}/products', [CategoryController::class, 'products']);
 
 Route::apiResource('products', ProductController::class);
 Route::apiResource('orders', OrderController::class);
@@ -65,3 +66,5 @@ Route::prefix('cart')->group(function () {
 Route::get('/policies', [PolicyController::class, 'index']);
 Route::get('/policies/{key}', [PolicyController::class, 'show']);
 Route::put('/policies/{key}', [PolicyController::class, 'update']);
+
+Route::get('/dashboard/metrics', [DashboardController::class, 'getDashboardMetrics']);
