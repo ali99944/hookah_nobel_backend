@@ -70,8 +70,10 @@ class CategoryController extends Controller
     }
 
     // DELETE /api/categories/{id}
-    public function destroy(Category $category)
+    public function destroy($id)
     {
+        $category = Category::findOrFail($id);
+
         if ($category->image) {
             Storage::disk('public')->delete($category->image);
         }
@@ -80,7 +82,7 @@ class CategoryController extends Controller
 
         return response()->json(['message' => 'Category deleted successfully']);
     }
-
+    
     public function products ($slug)
     {
         $category = Category::where('slug', $slug)->firstOrFail();
