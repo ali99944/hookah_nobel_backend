@@ -23,13 +23,14 @@ class OrderSeeder extends Seeder
             $order = Order::create([
                 'subtotal' => 0, // Will update below
                 'shipping_cost' => 15.00,
+                'fees_cost' => 0,
                 'total' => 0, // Will update below
                 'status' => fake()->randomElement(['pending', 'processing', 'shipped', 'delivered']),
-                'tracking_number' => rand(0, 1) ? 'TRK-' . rand(10000, 99999) : null,
+                'tracking_code' => rand(0, 1) ? 'TRK-' . rand(10000, 99999) : null,
                 'customer_name' => fake()->name('ar_SA'),
                 'customer_phone' => fake()->phoneNumber(),
-                'customer_address' => fake()->address(),
-                'customer_city' => fake()->city(),
+                'address' => fake()->address(),
+                'city' => fake()->city(),
                 'customer_email' => fake()->email(),
             ]);
 

@@ -4,16 +4,33 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Order extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'subtotal', 'shipping_cost', 'total',
-        'status', 'tracking_number',
-        'customer_name', 'customer_phone', 'customer_address', 'customer_city', 'customer_email'
+        'customer_name',
+        'customer_email',
+        'customer_phone',
+
+        'status',
+        'is_paid',
+        'tracking_code',
+
+        'subtotal',
+        'fees_cost',
+        'shipping_cost',
+        'total',
+
+        'address',
+        'city',
+        'notes',
+    ];
+
+    protected $casts = [
+        'is_paid' => 'boolean',
     ];
 
     // Relationships
@@ -22,8 +39,14 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function user()
+    public static function generateTrackingCode(): string
     {
-        return $this->belongsTo(User::class);
+        $timestamp = now()->format('ymd');
+        do {
+            $random = strtoupper(Str::random(6));
+            $code = "HN-$timestamp-$random";
+        } while (self::where('tracking_code', $code)->exists());
+
+        return $code;
     }
 }

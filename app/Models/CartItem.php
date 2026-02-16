@@ -29,4 +29,9 @@ class CartItem extends Model
     {
         return $query->whereNotNull('guest_cart_token');
     }
+
+    public function scopeForGuestToken($query, ?string $guestToken)
+    {
+        return $query->where('guest_cart_token', $guestToken);
+    }
 }

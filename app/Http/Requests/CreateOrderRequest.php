@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Contracts\Validation\Validator;
 
 class CreateOrderRequest extends FormRequest
 {
@@ -13,43 +13,43 @@ class CreateOrderRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'address' => $this->input('address', $this->input('shipping_info.address')),
+            'city' => $this->input('city', $this->input('shipping_info.city')),
+            'notes' => $this->input('notes', $this->input('shipping_info.notes')),
+            'customer_phone' => $this->input('customer_phone', $this->input('phone_number')),
+        ]);
+    }
+
     public function rules(): array
     {
         return [
-            // Items
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
-
-            // Customer Info (Nested object in request, flattened in DB)
-            'customer' => 'required|array',
-            'customer.name' => 'required|string|max:255',
-            'customer.phone' => 'required|string|max:20',
-            'customer.address' => 'required|string',
-            'customer.city' => 'required|string|max:100',
-            'customer.email' => 'nullable|email|max:255',
-
-            // Optional: You might want to validate shipping cost if dynamic
-            // 'shipping_cost' => 'nullable|numeric|min:0'
+            'customer_name' => 'required|string|max:255',
+            'customer_email' => 'nullable|email|max:255',
+            'customer_phone' => 'required|string|max:50',
+            'address' => 'required|string|max:1000',
+            'city' => 'required|string|max:255',
+            'notes' => 'nullable|string|max:2000',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'items.required' => 'سلة التسوق فارغة.',
-            'items.*.product_id.exists' => 'أحد المنتجات المختارة غير متوفر.',
-            'customer.name.required' => 'اسم العميل مطلوب.',
-            'customer.phone.required' => 'رقم الهاتف مطلوب.',
-            'customer.address.required' => 'العنوان مطلوب.',
+            'customer_name.required' => 'Customer name is required.',
+            'customer_phone.required' => 'Phone number is required.',
+            'address.required' => 'Address is required.',
+            'city.required' => 'City is required.',
         ];
     }
 
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([
-            'message' => 'بيانات الطلب غير صالحة',
-            'errors' => $validator->errors()
+            'message' => 'Order data is invalid.',
+            'errors' => $validator->errors(),
         ], 422));
     }
 }

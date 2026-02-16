@@ -8,8 +8,12 @@ use Illuminate\Support\Facades\Storage;
 class OrderItem extends Model
 {
     protected $fillable = [
-        'order_id', 'product_id', 'product_name',
-        'quantity', 'price', 'cover_image'
+        'order_id',
+        'product_id',
+        'product_name',
+        'quantity',
+        'price',
+        'cover_image',
     ];
 
     public function getCoverImageUrlAttribute()

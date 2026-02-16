@@ -11,23 +11,29 @@ return new class extends Migration
         // 1. Orders Table
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null'); // Nullable for guest checkout
 
             // Financials
             $table->decimal('subtotal', 10, 2);
             $table->decimal('shipping_cost', 10, 2)->default(0);
+            $table->decimal('fees_cost', 10, 2)->default(0);
             $table->decimal('total', 10, 2);
 
             // Status & Tracking
-            $table->enum('status', ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled'])->default('pending');
-            $table->string('tracking_number')->nullable();
+            $table->enum('status', ['pending', 'processing', 'shipped', 'delivered', 'cancelled'])->default('pending');
+            $table->boolean('is_paid')->default(false);
+            $table->string('tracking_code')->nullable();
 
             // Customer Info (Stored directly on order to preserve history if user changes address later)
             $table->string('customer_name');
             $table->string('customer_phone');
-            $table->text('customer_address');
-            $table->string('customer_city');
+
+            // used for checkout invoices and notifications, not necessarily the same as the user's email if they are logged in
             $table->string('customer_email')->nullable();
+
+
+            $table->text('address');
+            $table->string('city');
+            $table->text('notes')->nullable();
 
             $table->timestamps();
         });

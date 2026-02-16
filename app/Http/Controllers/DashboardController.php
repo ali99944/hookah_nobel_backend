@@ -5,45 +5,67 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
     public function getDashboardMetrics()
     {
-        $orders_count = Order::query()->count();
-        $sales_revenue = Order::query()->where('status',  'delivered')->sum('total');
-        $categories_count = Category::query()->count();
-        $products_count = Product::query()->count();
+        $ordersCount = Order::query()->count();
+        $salesRevenue = (float) Order::query()->where('status', 'delivered')->sum('total');
+        $categoriesCount = Category::query()->count();
+        $productsCount = Product::query()->count();
 
-        $revenue_per_day = Order::query()
+        $days = collect(range(6, 0))
+            ->map(fn ($offset) => Carbon::now()->subDays($offset)->startOfDay());
+
+        $startDate = $days->first()->copy()->startOfDay();
+        $endDate = $days->last()->copy()->endOfDay();
+
+        $rawRevenue = Order::query()
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->selectRaw('DATE(created_at) as date, SUM(total) as revenue')
-            ->groupBy('created_at')
-            ->get()
-            ->pluck('revenue')
+            ->groupBy('date')
+            ->pluck('revenue', 'date');
+
+        $revenueLabels = $days->map(fn (Carbon $day) => $day->locale('ar')->translatedFormat('D'))->toArray();
+        $revenuePerDay = $days
+            ->map(function (Carbon $day) use ($rawRevenue) {
+                $key = $day->toDateString();
+                return round((float) ($rawRevenue[$key] ?? 0), 2);
+            })
             ->toArray();
 
-        $orders_by_status = Order::query()
+        $ordersByStatusRaw = Order::query()
             ->selectRaw('status, COUNT(*) as count')
             ->groupBy('status')
-            ->get()
-            ->toArray();
+            ->pluck('count', 'status');
 
-        $products_by_category = Product::query()
+        $ordersByStatus = [
+            'pending' => (int) ($ordersByStatusRaw['pending'] ?? 0),
+            'processing' => (int) ($ordersByStatusRaw['processing'] ?? 0),
+            'shipped' => (int) ($ordersByStatusRaw['shipped'] ?? 0),
+            'delivered' => (int) ($ordersByStatusRaw['delivered'] ?? 0),
+            'cancelled' => (int) ($ordersByStatusRaw['cancelled'] ?? 0),
+            'paid' => (int) Order::query()->where('is_paid', true)->count(),
+        ];
+
+        $productsByCategory = Product::query()
             ->selectRaw('categories.name as category, COUNT(*) as count')
             ->join('categories', 'products.category_id', '=', 'categories.id')
-            ->groupBy('category')
-            ->get()
+            ->groupBy('categories.name')
+            ->pluck('count', 'category')
             ->toArray();
 
         return response()->json([
-            'orders_count' => $orders_count,
-            'sales_revenue' => $sales_revenue,
-            'categories_count' => $categories_count,
-            'products_count' => $products_count,
-            'revenue_per_day' => $revenue_per_day,
-            'orders_by_status' => $orders_by_status,
-            'products_by_category' => $products_by_category,
+            'orders_count' => (int) $ordersCount,
+            'sales_revenue' => round($salesRevenue, 2),
+            'categories_count' => (int) $categoriesCount,
+            'products_count' => (int) $productsCount,
+            'revenue_labels' => $revenueLabels,
+            'revenue_per_day' => $revenuePerDay,
+            'order_by_status' => $ordersByStatus,
+            'products_by_category' => $productsByCategory,
         ]);
     }
 }

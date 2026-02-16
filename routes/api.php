@@ -49,6 +49,7 @@ Route::apiResource('collections', CategoryController::class);
 Route::get('/collections/{slug}/products', [CategoryController::class, 'products']);
 
 Route::apiResource('products', ProductController::class);
+Route::get('/orders/track/{trackingCode}', [OrderController::class, 'track']);
 Route::apiResource('orders', OrderController::class);
 
 Route::apiResource('contact-requests', ContactRequestController::class);
