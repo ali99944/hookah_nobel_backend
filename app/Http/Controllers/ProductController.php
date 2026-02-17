@@ -17,19 +17,19 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with('category'); // Eager load category
+        $query = Product::query()->with(['category', 'gallery', 'attributes', 'features']);
 
-        if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+        if ($request->filled('search')) {
+            $search = trim((string) $request->input('search'));
+            $query->where('name', 'like', '%' . $search . '%');
         }
 
-        if ($request->has('category_id')) {
-            $query->where('category_id', $request->category_id);
+        if ($request->filled('category_id') && is_numeric($request->input('category_id'))) {
+            $query->where('category_id', (int) $request->input('category_id'));
         }
 
-        $query->latest();
+        $query->latest('id');
 
-        // Return all products without pagination
         return ProductResource::collection($query->get());
     }
 
