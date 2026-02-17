@@ -16,12 +16,6 @@ class CategorySeeder extends Seeder
                 'slug' => 'hookahs',
             ],
 
-            // Bowls
-            [
-                'name' => 'رؤوس الشيشة',
-                'slug' => 'bowls',
-            ],
-
             // Tobacco / Flavors
             [
                 'name' => 'المعسل والنكهات',
@@ -32,30 +26,6 @@ class CategorySeeder extends Seeder
             [
                 'name' => 'الفحم',
                 'slug' => 'charcoal',
-            ],
-
-            // Heating Tools
-            [
-                'name' => 'التسخين',
-                'slug' => 'heating',
-            ],
-
-            // Hoses
-            [
-                'name' => 'الخراطيم',
-                'slug' => 'hoses',
-            ],
-
-            // Mouthpieces
-            [
-                'name' => 'المباسم',
-                'slug' => 'mouthpieces',
-            ],
-
-            // Spare Parts
-            [
-                'name' => 'قطع الغيار',
-                'slug' => 'spare-parts',
             ],
 
             // Accessories

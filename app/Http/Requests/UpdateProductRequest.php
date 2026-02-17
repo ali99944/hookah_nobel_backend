@@ -5,8 +5,6 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rule;
 
 class UpdateProductRequest extends FormRequest
 {
@@ -17,15 +15,12 @@ class UpdateProductRequest extends FormRequest
 
     public function rules(): array
     {
-        Log::channel('server_debug') -> info($this);
         return [
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
-            'slug' => ['required', 'string', 'max:255', Rule::unique('products')->ignore($this->product->id)],
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'status' => 'required|in:active,inactive,draft',
+            'status' => 'required|in:active,inactive',
 
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
 
@@ -45,13 +40,6 @@ class UpdateProductRequest extends FormRequest
             'features' => 'nullable|array',
             'features.*.key' => 'required_with:features|string|max:255',
             'features.*.value' => 'required_with:features|string',
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'slug.unique' => 'الرابط المستخدم موجود مسبقاً.',
         ];
     }
 
@@ -76,3 +64,4 @@ class UpdateProductRequest extends FormRequest
         ], 422));
     }
 }
+

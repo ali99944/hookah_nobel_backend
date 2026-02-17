@@ -13,12 +13,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->string('name');
-            $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
             $table->decimal('discount', 10, 2)->nullable()->default(0.00);
-            $table->integer('stock')->default(0);
-            $table->enum('status', ['active', 'inactive', 'draft'])->default('draft');
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->string('cover_image')->nullable();
             $table->timestamps();
         });
@@ -58,4 +56,3 @@ return new class extends Migration
         Schema::dropIfExists('products');
     }
 };
-

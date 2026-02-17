@@ -16,10 +16,8 @@ class ProductSeeder extends Seeder
             $product = Product::create([
                 'category_id' => $hookahCat->id,
                 'name' => 'شيشة خليل مأمون كلاسيك',
-                'slug' => 'khalil-mamoon-classic',
                 'description' => 'شيشة مصرية أصلية مصنوعة يدوياً من النحاس.',
                 'price' => 1200.00,
-                'stock' => 10,
                 'status' => 'active',
             ]);
 
@@ -36,3 +34,4 @@ class ProductSeeder extends Seeder
         }
     }
 }
+

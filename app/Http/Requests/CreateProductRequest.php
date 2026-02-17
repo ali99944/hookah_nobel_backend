@@ -18,11 +18,9 @@ class CreateProductRequest extends FormRequest
         return [
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:products,slug',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'status' => 'required|in:active,inactive,draft',
+            'status' => 'required|in:active,inactive',
 
             // Images
             'cover_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
@@ -45,7 +43,6 @@ class CreateProductRequest extends FormRequest
     {
         return [
             'category_id.exists' => 'التصنيف المختار غير صالح.',
-            'slug.unique' => 'الرابط المستخدم موجود مسبقاً.',
             'cover_image.required' => 'صورة الغلاف مطلوبة.',
             'attributes.*.key.required_with' => 'اسم الخاصية مطلوب.',
         ];
@@ -71,3 +68,4 @@ class CreateProductRequest extends FormRequest
         ], 422));
     }
 }
+

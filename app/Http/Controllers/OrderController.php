@@ -92,13 +92,6 @@ class OrderController extends Controller
                 ], 422);
             }
 
-            if ($product->stock < $cartItem->quantity) {
-                return response()->json([
-                    'message' => "Insufficient stock for '{$product->name}'.",
-                    'available_stock' => $product->stock,
-                ], 422);
-            }
-
             $lineTotal = round(((float) $product->price) * $cartItem->quantity, 2);
             $subtotal += $lineTotal;
 
@@ -142,12 +135,6 @@ class OrderController extends Controller
             ]);
 
             $order->items()->createMany($orderItemsPayload);
-
-            foreach ($cartItems as $cartItem) {
-                if ($cartItem->product) {
-                    $cartItem->product->decrement('stock', $cartItem->quantity);
-                }
-            }
 
             CartItem::query()
                 ->forGuestToken($guestToken)
@@ -208,7 +195,6 @@ class OrderController extends Controller
 
             if (array_key_exists('items', $validated)) {
                 $existingItems = $order->items()
-                    ->with('product')
                     ->get()
                     ->keyBy('id');
 
@@ -220,9 +206,6 @@ class OrderController extends Controller
                 });
 
                 foreach ($removedItems as $removedItem) {
-                    if ($removedItem->product) {
-                        $removedItem->product->increment('stock', $removedItem->quantity);
-                    }
                     $removedItem->delete();
                 }
 
@@ -237,19 +220,6 @@ class OrderController extends Controller
 
                     $newQuantity = (int) $incomingItem['quantity'];
                     $newPrice = (float) $incomingItem['price'];
-                    $oldQuantity = (int) $item->quantity;
-                    $quantityDiff = $newQuantity - $oldQuantity;
-
-                    if ($quantityDiff > 0 && $item->product) {
-                        if ($item->product->stock < $quantityDiff) {
-                            throw ValidationException::withMessages([
-                                'items' => ["Insufficient stock for '{$item->product_name}'."],
-                            ]);
-                        }
-                        $item->product->decrement('stock', $quantityDiff);
-                    } elseif ($quantityDiff < 0 && $item->product) {
-                        $item->product->increment('stock', abs($quantityDiff));
-                    }
 
                     $item->quantity = $newQuantity;
                     $item->price = $newPrice;
