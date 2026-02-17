@@ -29,7 +29,8 @@ class ProductController extends Controller
 
         $query->latest();
 
-        return ProductResource::collection($query->paginate($request->get('per_page', 10)));
+        // Return all products without pagination
+        return ProductResource::collection($query->get());
     }
 
     public function store(CreateProductRequest $request)
